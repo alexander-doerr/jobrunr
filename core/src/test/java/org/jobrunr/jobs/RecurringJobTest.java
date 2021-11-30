@@ -2,7 +2,7 @@ package org.jobrunr.jobs;
 
 import org.jobrunr.jobs.lambdas.IocJobLambda;
 import org.jobrunr.jobs.lambdas.JobLambda;
-import org.jobrunr.scheduling.cron.Cron;
+import org.jobrunr.scheduling.schedule.cron.Cron;
 import org.jobrunr.stubs.TestService;
 import org.junit.jupiter.api.Test;
 

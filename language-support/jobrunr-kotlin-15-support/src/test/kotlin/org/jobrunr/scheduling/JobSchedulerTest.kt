@@ -6,7 +6,7 @@ import org.awaitility.Durations
 import org.jobrunr.configuration.JobRunr
 import org.jobrunr.jobs.mappers.JobMapper
 import org.jobrunr.jobs.states.StateName.*
-import org.jobrunr.scheduling.cron.Cron
+import org.jobrunr.scheduling.schedule.cron.Cron
 import org.jobrunr.server.BackgroundJobServerConfiguration.usingStandardBackgroundJobServerConfiguration
 import org.jobrunr.server.JobActivator
 import org.jobrunr.storage.InMemoryStorageProvider

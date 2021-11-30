@@ -6,8 +6,8 @@ import org.jobrunr.jobs.JobDetails;
 import org.jobrunr.jobs.RecurringJob;
 import org.jobrunr.jobs.mappers.JobMapper;
 import org.jobrunr.jobs.states.ScheduledState;
-import org.jobrunr.scheduling.cron.Cron;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.Cron;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
 import org.jobrunr.server.BackgroundJobServer;
 import org.jobrunr.storage.listeners.JobStatsChangeListener;
 import org.jobrunr.storage.listeners.MetadataChangeListener;
@@ -617,7 +617,7 @@ public abstract class StorageProviderTest {
         RecurringJob recurringJobv2 = new RecurringJob("my-job", defaultJobDetails().build(), CronExpression.create(Cron.hourly()), ZoneId.systemDefault());
         storageProvider.saveRecurringJob(recurringJobv2);
         assertThat(storageProvider.getRecurringJobs()).hasSize(1);
-        assertThat(storageProvider.getRecurringJobs().get(0).getCronExpression()).isEqualTo(Cron.hourly());
+        assertThat(storageProvider.getRecurringJobs().get(0).getSchedule().toString()).isEqualTo(Cron.hourly());
 
         storageProvider.deleteRecurringJob("my-job");
 

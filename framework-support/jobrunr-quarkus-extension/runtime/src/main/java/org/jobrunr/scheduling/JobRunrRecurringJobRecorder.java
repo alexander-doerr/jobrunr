@@ -8,7 +8,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
 import org.jboss.logging.Logger;
 import org.jobrunr.jobs.JobDetails;
 import org.jobrunr.quarkus.annotations.Recurring;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
 
 import java.time.ZoneId;
 import java.util.NoSuchElementException;

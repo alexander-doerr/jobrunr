@@ -7,7 +7,7 @@ import org.jobrunr.jobs.context.JobContext;
 import org.jobrunr.jobs.lambdas.JobLambda;
 import org.jobrunr.jobs.states.FailedState;
 import org.jobrunr.jobs.states.ProcessingState;
-import org.jobrunr.scheduling.cron.Cron;
+import org.jobrunr.scheduling.schedule.cron.Cron;
 import org.jobrunr.scheduling.exceptions.JobClassNotFoundException;
 import org.jobrunr.scheduling.exceptions.JobMethodNotFoundException;
 import org.jobrunr.server.BackgroundJobServer;

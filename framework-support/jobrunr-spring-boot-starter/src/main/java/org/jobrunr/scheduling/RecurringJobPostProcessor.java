@@ -1,7 +1,7 @@
 package org.jobrunr.scheduling;
 
 import org.jobrunr.jobs.JobDetails;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
 import org.jobrunr.spring.annotations.Recurring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

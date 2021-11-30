@@ -3,8 +3,8 @@ package org.jobrunr.jobs;
 import org.jobrunr.jobs.details.JobDetailsAsmGenerator;
 import org.jobrunr.jobs.lambdas.IocJobLambda;
 import org.jobrunr.jobs.lambdas.JobLambda;
-import org.jobrunr.scheduling.cron.Cron;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.Cron;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
 
 import java.time.ZoneId;
 

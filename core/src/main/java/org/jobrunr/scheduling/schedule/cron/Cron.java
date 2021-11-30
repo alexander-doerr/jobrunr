@@ -1,4 +1,4 @@
-package org.jobrunr.scheduling.cron;
+package org.jobrunr.scheduling.schedule.cron;
 
 import java.time.DayOfWeek;
 import java.time.Month;

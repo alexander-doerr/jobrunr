@@ -2,7 +2,8 @@ package org.jobrunr.jobs;
 
 import org.jobrunr.jobs.states.EnqueuedState;
 import org.jobrunr.jobs.states.ScheduledState;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.*;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -12,23 +13,24 @@ import java.util.Optional;
 public class RecurringJob extends AbstractJob {
 
     private String id;
-    private String cronExpression;
+    private Schedule schedule;
     private String zoneId;
 
     private RecurringJob() {
         // used for deserialization
     }
 
-    public RecurringJob(String id, JobDetails jobDetails, CronExpression cronExpression, ZoneId zoneId) {
-        this(id, jobDetails, cronExpression.getExpression(), zoneId.getId());
-    }
-
-    public RecurringJob(String id, JobDetails jobDetails, String cronExpression, String zoneId) {
+    public RecurringJob(String id, JobDetails jobDetails, Schedule schedule, ZoneId zoneId) {
         super(jobDetails);
         this.id = validateAndSetId(id);
-        this.cronExpression = cronExpression;
-        this.zoneId = zoneId;
-        validateCronExpression();
+        this.schedule = schedule;
+        this.zoneId = zoneId.getId();
+
+        this.schedule.validateSchedule();
+    }
+
+    public RecurringJob(String id, JobDetails jobDetails, String schedule, String zoneId) {
+        this(id, jobDetails, ScheduleFactory.getSchedule(schedule), ZoneId.of(zoneId));
     }
 
     @Override
@@ -36,8 +38,8 @@ public class RecurringJob extends AbstractJob {
         return id;
     }
 
-    public String getCronExpression() {
-        return cronExpression;
+    public Schedule getSchedule() {
+        return schedule;
     }
 
     public Job toScheduledJob() {
@@ -58,7 +60,7 @@ public class RecurringJob extends AbstractJob {
     }
 
     public Instant getNextRun() {
-        return CronExpression.create(cronExpression).next(ZoneId.of(zoneId));
+        return schedule.next(ZoneId.of(zoneId));
     }
 
     private String validateAndSetId(String input) {
@@ -79,13 +81,5 @@ public class RecurringJob extends AbstractJob {
                 ", jobSignature='" + getJobSignature() + '\'' +
                 ", jobName='" + getJobName() + '\'' +
                 '}';
-    }
-
-    private void validateCronExpression() {
-        Instant base = Instant.EPOCH;
-        Instant fiveSeconds = base.plusSeconds(5);
-        if (CronExpression.create(cronExpression).next(base, ZoneOffset.UTC).isBefore(fiveSeconds)) {
-            throw new IllegalArgumentException("The smallest interval for recurring jobs is 5 seconds. Please also make sure that your 'pollIntervalInSeconds' configuration matches the smallest recurring job interval.");
-        }
     }
 }

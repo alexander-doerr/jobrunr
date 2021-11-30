@@ -6,7 +6,7 @@ import org.jobrunr.jobs.Job;
 import org.jobrunr.jobs.JobId;
 import org.jobrunr.jobs.lambdas.JobRequest;
 import org.jobrunr.jobs.stubs.SimpleJobActivator;
-import org.jobrunr.scheduling.cron.Cron;
+import org.jobrunr.scheduling.schedule.cron.Cron;
 import org.jobrunr.server.BackgroundJobServer;
 import org.jobrunr.storage.InMemoryStorageProvider;
 import org.jobrunr.storage.StorageProviderForTest;

@@ -4,7 +4,8 @@ import org.jobrunr.jobs.JobDetails;
 import org.jobrunr.jobs.JobId;
 import org.jobrunr.jobs.filters.JobFilter;
 import org.jobrunr.jobs.lambdas.JobRequest;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.*;
 import org.jobrunr.storage.StorageProvider;
 
 import java.time.*;
@@ -243,7 +244,7 @@ public class JobRequestScheduler extends AbstractJobScheduler {
      * @param cron       The cron expression defining when to run this recurring job
      * @param jobRequest the jobRequest which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public String scheduleRecurrently(String cron, JobRequest jobRequest) {
         return scheduleRecurrently(null, cron, jobRequest);
@@ -261,7 +262,7 @@ public class JobRequestScheduler extends AbstractJobScheduler {
      * @param cron       The cron expression defining when to run this recurring job
      * @param jobRequest the jobRequest which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public String scheduleRecurrently(String id, String cron, JobRequest jobRequest) {
         return scheduleRecurrently(id, cron, systemDefault(), jobRequest);
@@ -280,7 +281,7 @@ public class JobRequestScheduler extends AbstractJobScheduler {
      * @param zoneId     The zoneId (timezone) of when to run this recurring job
      * @param jobRequest the jobRequest which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public String scheduleRecurrently(String id, String cron, ZoneId zoneId, JobRequest jobRequest) {
         JobDetails jobDetails = new JobDetails(jobRequest);

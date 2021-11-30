@@ -2,7 +2,7 @@ package org.jobrunr.scheduling;
 
 import io.micronaut.inject.ExecutableMethod;
 import org.jobrunr.micronaut.annotations.Recurring;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

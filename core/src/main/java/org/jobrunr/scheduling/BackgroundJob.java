@@ -9,6 +9,7 @@ import org.jobrunr.jobs.lambdas.JobLambdaFromStream;
 import java.time.*;
 import java.util.UUID;
 import java.util.stream.Stream;
+import org.jobrunr.scheduling.schedule.cron.*;
 
 /**
  * Provides static methods for creating fire-and-forget, delayed and recurring jobs as well as to delete existing background jobs.
@@ -432,7 +433,7 @@ public class BackgroundJob {
      * @param cron The cron expression defining when to run this recurring job
      * @param job  the lambda which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static String scheduleRecurrently(String cron, JobLambda job) {
         verifyJobScheduler();
@@ -449,7 +450,7 @@ public class BackgroundJob {
      * @param cron   The cron expression defining when to run this recurring job
      * @param iocJob the lambda which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static <S> String scheduleRecurrently(String cron, IocJobLambda<S> iocJob) {
         verifyJobScheduler();
@@ -468,7 +469,7 @@ public class BackgroundJob {
      * @param cron The cron expression defining when to run this recurring job
      * @param job  the lambda which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static String scheduleRecurrently(String id, String cron, JobLambda job) {
         verifyJobScheduler();
@@ -486,7 +487,7 @@ public class BackgroundJob {
      * @param cron   The cron expression defining when to run this recurring job
      * @param iocJob the lambda which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static <S> String scheduleRecurrently(String id, String cron, IocJobLambda<S> iocJob) {
         verifyJobScheduler();
@@ -506,7 +507,7 @@ public class BackgroundJob {
      * @param zoneId The zoneId (timezone) of when to run this recurring job
      * @param job    the lambda which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static String scheduleRecurrently(String id, String cron, ZoneId zoneId, JobLambda job) {
         verifyJobScheduler();
@@ -525,11 +526,116 @@ public class BackgroundJob {
      * @param zoneId The zoneId (timezone) of when to run this recurring job
      * @param iocJob the lambda which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static <S> String scheduleRecurrently(String id, String cron, ZoneId zoneId, IocJobLambda<S> iocJob) {
         verifyJobScheduler();
         return jobScheduler.scheduleRecurrently(id, cron, zoneId, iocJob);
+    }
+
+    /**
+     * Creates a new recurring job based on the given duration and the given lambda. The jobs will be scheduled using the systemDefault timezone.
+     * <h5>An example:</h5>
+     * <pre>{@code
+     *      MyService service = new MyService();
+     *      BackgroundJob.scheduleRecurrently(Duration.parse("P5D"), () -> service.doWork());
+     * }</pre>
+     *
+     * @param duration  the duration defining the time between each instance of this recurring job
+     * @param job  the lambda which defines the fire-and-forget job
+     * @return the id of this recurring job which can be used to alter or delete it
+     */
+    public static String scheduleRecurrently(Duration duration, JobLambda job) {
+        verifyJobScheduler();
+        return jobScheduler.scheduleRecurrently(duration, job);
+    }
+
+    /**
+     * Creates a new recurring job based on the given duration and the given lambda. The IoC container will be used to resolve {@code MyService}. The jobs will be scheduled using the systemDefault timezone.
+     * <h5>An example:</h5>
+     * <pre>{@code
+     *      BackgroundJob.<MyService>scheduleRecurrently(Duration.parse("P5D"), x -> x.doWork());
+     * }</pre>
+     *
+     * @param duration  the duration defining the time between each instance of this recurring job
+     * @param iocJob the lambda which defines the fire-and-forget job
+     * @return the id of this recurring job which can be used to alter or delete it
+     */
+    public static <S> String scheduleRecurrently(Duration duration, IocJobLambda<S> iocJob) {
+        verifyJobScheduler();
+        return jobScheduler.scheduleRecurrently(duration, iocJob);
+    }
+
+    /**
+     * Creates a new or alters the existing recurring job based on the given id, duration and lambda. The jobs will be scheduled using the systemDefault timezone
+     * <h5>An example:</h5>
+     * <pre>{@code
+     *      MyService service = new MyService();
+     *      BackgroundJob.scheduleRecurrently("my-recurring-job", Duration.parse("P5D"), () -> service.doWork());
+     * }</pre>
+     *
+     * @param id   the id of this recurring job which can be used to alter or delete it
+     * @param duration  the duration defining the time between each instance of this recurring job
+     * @param job  the lambda which defines the fire-and-forget job
+     * @return the id of this recurring job which can be used to alter or delete it
+     */
+    public static String scheduleRecurrently(String id, Duration duration, JobLambda job) {
+        verifyJobScheduler();
+        return jobScheduler.scheduleRecurrently(id, duration, job);
+    }
+
+    /**
+     * Creates a new or alters the existing recurring job based on the given id, duration and lambda. The IoC container will be used to resolve {@code MyService}. The jobs will be scheduled using the systemDefault timezone
+     * <h5>An example:</h5>
+     * <pre>{@code
+     *      BackgroundJob.<MyService>scheduleRecurrently("my-recurring-job", Duration.parse("P5D"), x -> x.doWork());
+     * }</pre>
+     *
+     * @param id     the id of this recurring job which can be used to alter or delete it
+     * @param duration   the duration defining the time between each instance of this recurring job
+     * @param iocJob the lambda which defines the fire-and-forget job
+     * @return the id of this recurring job which can be used to alter or delete it
+     */
+    public static <S> String scheduleRecurrently(String id, Duration duration, IocJobLambda<S> iocJob) {
+        verifyJobScheduler();
+        return jobScheduler.scheduleRecurrently(id, duration, iocJob);
+    }
+
+    /**
+     * Creates a new or alters the existing recurring job based on the given id, duration, {@code ZoneId} and lambda.
+     * <h5>An example:</h5>
+     * <pre>{@code
+     *      MyService service = new MyService();
+     *      BackgroundJob.scheduleRecurrently("my-recurring-job", Duration.parse("P5D"), ZoneId.of("Europe/Brussels"), () -> service.doWork());
+     * }</pre>
+     *
+     * @param id     the id of this recurring job which can be used to alter or delete it
+     * @param duration   the duration defining the time between each instance of this recurring job
+     * @param zoneId The zoneId (timezone) of when to run this recurring job
+     * @param job    the lambda which defines the fire-and-forget job
+     * @return the id of this recurring job which can be used to alter or delete it
+     */
+    public static String scheduleRecurrently(String id, Duration duration, ZoneId zoneId, JobLambda job) {
+        verifyJobScheduler();
+        return jobScheduler.scheduleRecurrently(id, duration, zoneId, job);
+    }
+
+    /**
+     * Creates a new or alters the existing recurring job based on the given id, duration, {@code ZoneId} and lambda. The IoC container will be used to resolve {@code MyService}.
+     * <h5>An example:</h5>
+     * <pre>{@code
+     *      BackgroundJob.<MyService>scheduleRecurrently("my-recurring-job", Duration.parse("P5D"), ZoneId.of("Europe/Brussels"), x -> x.doWork());
+     * }</pre>
+     *
+     * @param id     the id of this recurring job which can be used to alter or delete it
+     * @param duration   the duration defining the time between each instance of this recurring job
+     * @param zoneId The zoneId (timezone) of when to run this recurring job
+     * @param iocJob the lambda which defines the fire-and-forget job
+     * @return the id of this recurring job which can be used to alter or delete it
+     */
+    public static <S> String scheduleRecurrently(String id, Duration duration, ZoneId zoneId, IocJobLambda<S> iocJob) {
+        verifyJobScheduler();
+        return jobScheduler.scheduleRecurrently(id, duration, zoneId, iocJob);
     }
 
     /**

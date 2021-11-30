@@ -1,4 +1,4 @@
-package org.jobrunr.scheduling.cron;
+package org.jobrunr.scheduling.schedule.cron;
 
 public class InvalidCronExpressionException extends RuntimeException {
 

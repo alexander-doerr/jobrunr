@@ -6,6 +6,7 @@ import org.jobrunr.jobs.lambdas.JobRequest;
 import java.time.*;
 import java.util.UUID;
 import java.util.stream.Stream;
+import org.jobrunr.scheduling.schedule.cron.*;
 
 import static java.time.ZoneId.systemDefault;
 
@@ -243,7 +244,7 @@ public class BackgroundJobRequest {
      * @param cron       The cron expression defining when to run this recurring job
      * @param jobRequest the jobRequest which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static String scheduleRecurrently(String cron, JobRequest jobRequest) {
         verifyJobScheduler();
@@ -262,7 +263,7 @@ public class BackgroundJobRequest {
      * @param cron       The cron expression defining when to run this recurring job
      * @param jobRequest the jobRequest which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static String scheduleRecurrently(String id, String cron, JobRequest jobRequest) {
         verifyJobScheduler();
@@ -282,7 +283,7 @@ public class BackgroundJobRequest {
      * @param zoneId     The zoneId (timezone) of when to run this recurring job
      * @param jobRequest the jobRequest which defines the fire-and-forget job
      * @return the id of this recurring job which can be used to alter or delete it
-     * @see org.jobrunr.scheduling.cron.Cron
+     * @see Cron
      */
     public static String scheduleRecurrently(String id, String cron, ZoneId zoneId, JobRequest jobRequest) {
         verifyJobScheduler();

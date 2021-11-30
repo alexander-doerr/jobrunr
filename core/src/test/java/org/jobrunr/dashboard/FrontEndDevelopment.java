@@ -6,7 +6,7 @@ import org.jobrunr.jobs.context.JobContext;
 import org.jobrunr.jobs.mappers.JobMapper;
 import org.jobrunr.jobs.states.ScheduledState;
 import org.jobrunr.scheduling.BackgroundJob;
-import org.jobrunr.scheduling.cron.Cron;
+import org.jobrunr.scheduling.schedule.cron.Cron;
 import org.jobrunr.server.dashboard.CpuAllocationIrregularityNotification;
 import org.jobrunr.server.dashboard.DashboardNotificationManager;
 import org.jobrunr.storage.InMemoryStorageProvider;

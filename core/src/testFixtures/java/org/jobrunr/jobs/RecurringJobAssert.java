@@ -18,8 +18,8 @@ public class RecurringJobAssert extends AbstractAssert<RecurringJobAssert, Recur
         return this;
     }
 
-    public RecurringJobAssert hasCronExpression(String cronExpression) {
-        Assertions.assertThat(actual.getCronExpression()).isEqualTo(cronExpression);
+    public RecurringJobAssert hasSchedule(String schedule) {
+        Assertions.assertThat(actual.getSchedule().toString()).isEqualTo(schedule);
         return this;
     }
 

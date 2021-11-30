@@ -1,4 +1,4 @@
-package org.jobrunr.scheduling.cron;
+package org.jobrunr.scheduling.schedule.cron;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

@@ -1,7 +1,7 @@
 package org.jobrunr.scheduling;
 
 import org.jobrunr.jobs.JobDetails;
-import org.jobrunr.scheduling.cron.CronExpression;
+import org.jobrunr.scheduling.schedule.cron.CronExpression;
 import org.jobrunr.spring.annotations.Recurring;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
