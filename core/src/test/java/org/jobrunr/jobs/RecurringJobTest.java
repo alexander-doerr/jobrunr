@@ -1,14 +1,12 @@
 package org.jobrunr.jobs;
 
+import java.time.*;
 import org.jobrunr.jobs.lambdas.IocJobLambda;
 import org.jobrunr.jobs.lambdas.JobLambda;
 import org.jobrunr.scheduling.schedule.cron.Cron;
+import org.jobrunr.scheduling.schedule.interval.*;
 import org.jobrunr.stubs.TestService;
 import org.junit.jupiter.api.Test;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,7 +57,7 @@ class RecurringJobTest {
     }
 
     @Test
-    void nextInstantIsCorrect() {
+    void nextInstantWithCronExpressionIsCorrect() {
         LocalDateTime localDateTime = LocalDateTime.now();
         LocalDateTime timeForCron = localDateTime.plusMinutes(-1);
 
@@ -76,8 +74,22 @@ class RecurringJobTest {
     }
 
     @Test
+    void nextInstantWithIntervalIsCorrect() {
+        final RecurringJob recurringJob = aDefaultRecurringJob()
+            .withName("the recurring job")
+            .withInterval(new Interval(Duration.ofHours(1)))
+            .withZoneId(ZoneOffset.of("+02:00"))
+            .build();
+        Instant nextRun = recurringJob.getNextRun();
+        assertThat(nextRun).isAfter(Instant.now());
+    }
+
+    @Test
     void smallestIntervalForRecurringJobIs5Seconds() {
         assertThatThrownBy(() -> aDefaultRecurringJob().withCronExpression("* * * * * *").build()).isInstanceOf(IllegalArgumentException.class);
         assertThatCode(() -> aDefaultRecurringJob().withCronExpression("*/5 * * * * *").build()).doesNotThrowAnyException();
+
+        assertThatThrownBy(() -> aDefaultRecurringJob().withInterval(new Interval(Duration.ofSeconds(4))).build()).isInstanceOf(IllegalArgumentException.class);
+        assertThatCode(() -> aDefaultRecurringJob().withInterval(new Interval(Duration.ofSeconds(5))).build()).doesNotThrowAnyException();
     }
 }

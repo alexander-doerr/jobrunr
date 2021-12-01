@@ -2,7 +2,6 @@ package org.jobrunr.scheduling.schedule.interval;
 
 import java.time.*;
 import org.jobrunr.scheduling.schedule.*;
-import org.jobrunr.scheduling.schedule.cron.CronExpression;
 
 public class Interval extends Schedule{
 
@@ -26,7 +25,7 @@ public class Interval extends Schedule{
 
   @Override
   public void validateSchedule() {
-    if (duration.getSeconds() <= SMALLEST_SCHEDULE_IN_SECONDS) {
+    if (duration.getSeconds() < SMALLEST_SCHEDULE_IN_SECONDS) {
       throw new IllegalArgumentException(String.format("The smallest interval for recurring jobs is %d seconds. Please also make sure that your 'pollIntervalInSeconds' configuration matches the smallest recurring job interval.", SMALLEST_SCHEDULE_IN_SECONDS));
     }
   }

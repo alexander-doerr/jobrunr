@@ -1,12 +1,14 @@
 package org.jobrunr.jobs;
 
+import java.time.*;
 import org.jobrunr.jobs.details.JobDetailsAsmGenerator;
 import org.jobrunr.jobs.lambdas.IocJobLambda;
 import org.jobrunr.jobs.lambdas.JobLambda;
+import org.jobrunr.scheduling.schedule.*;
 import org.jobrunr.scheduling.schedule.cron.Cron;
 import org.jobrunr.scheduling.schedule.cron.CronExpression;
 
-import java.time.ZoneId;
+import org.jobrunr.scheduling.schedule.interval.*;
 
 import static org.jobrunr.jobs.JobDetailsTestBuilder.defaultJobDetails;
 
@@ -15,7 +17,7 @@ public class RecurringJobTestBuilder {
     private String id;
     private String name;
     private JobDetails jobDetails;
-    private CronExpression cronExpression;
+    private Schedule schedule;
     private ZoneId zoneId;
 
     private RecurringJobTestBuilder() {
@@ -71,7 +73,12 @@ public class RecurringJobTestBuilder {
     }
 
     public RecurringJobTestBuilder withCronExpression(String cronExpression) {
-        this.cronExpression = CronExpression.create(cronExpression);
+        this.schedule = CronExpression.create(cronExpression);
+        return this;
+    }
+
+    public RecurringJobTestBuilder withInterval(Interval interval) {
+        this.schedule = interval;
         return this;
     }
 
@@ -81,7 +88,7 @@ public class RecurringJobTestBuilder {
     }
 
     public RecurringJob build() {
-        final RecurringJob recurringJob = new RecurringJob(id, jobDetails, cronExpression, zoneId);
+        final RecurringJob recurringJob = new RecurringJob(id, jobDetails, schedule, zoneId);
         recurringJob.setJobName(name);
         return recurringJob;
     }
