@@ -3,34 +3,34 @@ package org.jobrunr.jobs;
 import org.jobrunr.jobs.states.EnqueuedState;
 import org.jobrunr.jobs.states.ScheduledState;
 import org.jobrunr.scheduling.schedule.*;
-import org.jobrunr.scheduling.schedule.cron.CronExpression;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Optional;
+import org.jobrunr.scheduling.schedule.interval.*;
 
 public class RecurringJob extends AbstractJob {
 
     private String id;
-    private Schedule schedule;
+    private String scheduleExpression;
     private String zoneId;
+    private Instant createdAt;
 
     private RecurringJob() {
         // used for deserialization
     }
 
     public RecurringJob(String id, JobDetails jobDetails, Schedule schedule, ZoneId zoneId) {
-        super(jobDetails);
-        this.id = validateAndSetId(id);
-        this.schedule = schedule;
-        this.zoneId = zoneId.getId();
-
-        this.schedule.validateSchedule();
+        this(id, jobDetails, schedule.toString(), zoneId.getId());
     }
 
-    public RecurringJob(String id, JobDetails jobDetails, String schedule, String zoneId) {
-        this(id, jobDetails, ScheduleFactory.getSchedule(schedule), ZoneId.of(zoneId));
+    public RecurringJob(String id, JobDetails jobDetails, String expression, String zoneId) {
+        super(jobDetails);
+        this.id = validateAndSetId(id);
+        this.scheduleExpression = expression;
+        this.zoneId = zoneId;
+        this.createdAt = Instant.now();
+        ScheduleFactory.getSchedule(expression).validateSchedule();
     }
 
     @Override
@@ -38,8 +38,8 @@ public class RecurringJob extends AbstractJob {
         return id;
     }
 
-    public Schedule getSchedule() {
-        return schedule;
+    public String getScheduleExpression() {
+        return scheduleExpression;
     }
 
     public Job toScheduledJob() {
@@ -60,6 +60,15 @@ public class RecurringJob extends AbstractJob {
     }
 
     public Instant getNextRun() {
+        Schedule schedule = ScheduleFactory.getSchedule(scheduleExpression);
+        return getNextRun(schedule);
+    }
+
+    private Instant getNextRun(Schedule schedule) {
+        if(schedule instanceof Interval){
+            return schedule.next(createdAt, ZoneId.of(zoneId));
+        }
+
         return schedule.next(ZoneId.of(zoneId));
     }
 

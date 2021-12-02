@@ -4,13 +4,17 @@ import org.jobrunr.scheduling.schedule.cron.*;
 import org.jobrunr.scheduling.schedule.interval.*;
 
 public class ScheduleFactory {
-  public static Schedule getSchedule(String schedule){
+  public static Schedule getSchedule(String scheduleExpression){
+    ScheduleExpressionType type = ScheduleExpressionType.getScheduleType(scheduleExpression);
 
-    if(schedule.matches("\\s+")){
-      return CronExpression.create(schedule);
+    if(type.equals(ScheduleExpressionType.CRON_EXPRESSION)){
+      return CronExpression.create(scheduleExpression);
+    }
+    else if(type.equals(ScheduleExpressionType.INTERVAL)){
+      return new Interval(scheduleExpression);
     }
     else {
-      return new Interval(schedule);
+      throw new InvalidScheduleException("Schedule expression cannot be mapped to any type");
     }
   }
 }

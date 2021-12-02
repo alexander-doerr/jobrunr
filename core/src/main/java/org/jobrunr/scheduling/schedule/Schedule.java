@@ -1,7 +1,5 @@
 package org.jobrunr.scheduling.schedule;
 
-import org.jobrunr.scheduling.schedule.cron.CronExpression;
-
 import static java.time.Instant.now;
 
 import java.time.*;
