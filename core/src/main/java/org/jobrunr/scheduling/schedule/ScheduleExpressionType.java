@@ -13,6 +13,9 @@ public enum ScheduleExpressionType {
     else if (scheduleExpression.matches(".*\\s.*")){
       return CRON_EXPRESSION;
     }
+    else if (scheduleExpression.startsWith("P")){
+      return INTERVAL;
+    }
 
     return UNKNOWN;
   }
