@@ -11,16 +11,17 @@ public class Interval extends Schedule{
     this.duration = duration;
   }
 
-  public Interval(String duration){
-    this.duration = Duration.parse(duration);
+  public Interval(String durationExpression){
+    this.duration = Duration.parse(durationExpression);
   }
 
   @Override
   public Instant next(Instant baseInstant, ZoneId zoneId) {
-    LocalDateTime baseDate = LocalDateTime.ofInstant(baseInstant, zoneId);
-    baseDate = baseDate.plus(duration);
+    Duration difference = Duration.between(baseInstant, Instant.now());
 
-    return baseDate.atZone(zoneId).toInstant();
+    long div = difference.toNanos() / duration.toNanos();
+
+    return baseInstant.plusNanos(duration.toNanos() * (div + 1));
   }
 
   @Override
