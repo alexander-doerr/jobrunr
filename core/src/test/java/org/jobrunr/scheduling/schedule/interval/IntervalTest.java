@@ -4,6 +4,7 @@ import static java.time.ZoneOffset.UTC;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import io.micrometer.core.instrument.binder.httpcomponents.*;
 import java.time.*;
 import java.time.format.*;
 import java.util.stream.*;
@@ -16,24 +17,28 @@ class IntervalTest {
 
   private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-  private static final String ONE_SECOND = "PT1S";
+  private static final String TEN_SECONDS = "PT1S";
   private static final String FORTY_EIGHT_HOURS = "PT48H";
   private static final String EIGHT_DAYS = "P8D";
 
   @ParameterizedTest
   @MethodSource("startInstantDurationAndResultInstant")
-  void testInterval(String baseDate, String duration, String expectedResult) {
+  void testInterval(String baseDate, String durationExpression) {
     try {
       Instant inputInstant = LocalDateTime.parse(baseDate, dateTimeFormatter).toInstant(UTC);
-      Interval interval = new Interval(duration);
+      Interval interval = new Interval(durationExpression);
+      Duration duration = Duration.parse(durationExpression);
       Instant actualInstant = interval.next(inputInstant, UTC);
-      Instant expectedInstant = LocalDateTime.parse(expectedResult, dateTimeFormatter).toInstant(UTC);
+      Instant now = Instant.now();
 
       assertThat(actualInstant)
-          .describedAs("Expecting %s to be equal to %s for duration %s and start date %s", actualInstant, expectedInstant, duration, inputInstant)
-          .isEqualTo(expectedInstant);
+          .describedAs("Expecting %s to be after or equal to %s for duration %s and start date %s", actualInstant, now, duration, inputInstant)
+          .isAfterOrEqualTo(now);
+      assertThat(actualInstant)
+          .describedAs("Expecting %s to be before to %s for duration %s and start date %s", actualInstant, now.plus(duration), duration, inputInstant)
+          .isBefore(now.plus(duration));
     } catch (Exception e) {
-      System.out.println(String.format("Error for %s, %s and %s", baseDate, duration, expectedResult));
+      System.out.println(String.format("Error for %s and %s", baseDate, durationExpression));
       throw e;
     }
   }
@@ -73,30 +78,25 @@ class IntervalTest {
 
   static Stream<Arguments> startInstantDurationAndResultInstant() {
     return Stream.of(
-        arguments("2019-01-01 00:00:00", ONE_SECOND, "2019-01-01 00:00:01"),
-        arguments("2019-01-01 00:00:09", ONE_SECOND, "2019-01-01 00:00:10"),
+        arguments("2019-01-01 00:00:00", TEN_SECONDS),
+        arguments("2019-01-01 00:00:09", TEN_SECONDS),
+        arguments("2019-01-01 00:58:59", TEN_SECONDS),
+        arguments("2019-01-01 11:59:59", TEN_SECONDS),
+        arguments("2019-01-01 00:59:59", TEN_SECONDS),
+        arguments("2019-01-01 11:59:59", TEN_SECONDS),
+        arguments("2019-01-01 23:59:59", TEN_SECONDS),
+        arguments("2021-11-29 23:59:59", TEN_SECONDS),
+        arguments("2019-02-28 23:59:59", TEN_SECONDS),
+        arguments("2019-12-31 23:59:59", TEN_SECONDS),
+        arguments("2020-02-28 23:59:59", TEN_SECONDS),
 
-        // Second rollover
-        arguments("2019-01-01 00:58:59", ONE_SECOND, "2019-01-01 00:59:00"),
-        arguments("2019-01-01 11:59:59", ONE_SECOND, "2019-01-01 12:00:00"),
-        // Minute rollover
-        arguments("2019-01-01 00:59:59", ONE_SECOND, "2019-01-01 01:00:00"),
-        arguments("2019-01-01 11:59:59", ONE_SECOND, "2019-01-01 12:00:00"),
-        // Hour rollover
-        arguments("2019-01-01 23:59:59", ONE_SECOND, "2019-01-02 00:00:00"),
-        // Month rollover
-        arguments("2021-11-29 23:59:59", ONE_SECOND, "2021-11-30 00:00:00"),
-        arguments("2019-02-28 23:59:59", ONE_SECOND, "2019-03-01 00:00:00"),
-        // Year rollover
-        arguments("2019-12-31 23:59:59", ONE_SECOND, "2020-01-01 00:00:00"),
-        // Leap year
-        arguments("2020-02-28 23:59:59", ONE_SECOND, "2020-02-29 00:00:00"),
+        arguments("2021-01-01 11:59:59", FORTY_EIGHT_HOURS),
+        arguments("2021-11-29 11:59:59", FORTY_EIGHT_HOURS),
+        arguments("2021-11-28 11:59:59", FORTY_EIGHT_HOURS),
 
-        arguments("2021-01-01 11:59:59", FORTY_EIGHT_HOURS, "2021-01-03 11:59:59"),
-        arguments("2021-11-29 11:59:59", FORTY_EIGHT_HOURS, "2021-12-01 11:59:59"),
-
-        arguments("2021-01-01 11:59:59", EIGHT_DAYS, "2021-01-09 11:59:59"),
-        arguments("2021-11-29 11:59:59", EIGHT_DAYS, "2021-12-07 11:59:59")
+        arguments("2021-01-01 11:59:59", EIGHT_DAYS),
+        arguments("2021-11-29 11:59:59", EIGHT_DAYS),
+        arguments("2021-11-28 11:59:59", EIGHT_DAYS)
     );
   }
 }
